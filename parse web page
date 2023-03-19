@@ -1,0 +1,28 @@
+import pandas as pd
+import requests
+from bs4 import BeautifulSoup
+
+# specify the URL to download HTML from
+url = 'https://waalt.uh.edu/index.php/IDXCP40no740'
+
+# download the HTML content from the URL
+response = requests.get(url)
+
+# check if the request was successful (status code 200 means success)
+if response.status_code == 200:
+    # parse the HTML content with BeautifulSoup
+    soup = BeautifulSoup(response.content, 'html.parser')
+    # do something with the parsed HTML, e.g. print the title
+    print(soup.title.string)
+else:
+    # print an error message if the request was not successful
+    print('Failed to retrieve HTML content from URL:', url)
+
+
+tables = soup.find_all('table')
+table =tables[1]
+
+# convert the HTML table to a pandas DataFrame
+df = pd.read_html(str(table))[0]
+# do something with the DataFrame, e.g. print the first five rows
+print(df.head())
