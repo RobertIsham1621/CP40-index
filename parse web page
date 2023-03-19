@@ -1,6 +1,7 @@
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+import json
 
 # specify the URL to download HTML from
 url = 'https://waalt.uh.edu/index.php/IDXCP40no740'
@@ -23,6 +24,22 @@ tables = soup.find_all('table')
 table =tables[1]
 
 # convert the HTML table to a pandas DataFrame
-df = pd.read_html(str(table))[0]
-# do something with the DataFrame, e.g. print the first five rows
+df = pd.read_html(str(table), header=0)[0]
+# do something with the Data,coFrame, e.g. print the first five rows
+
+
 print(df.head())
+
+url = 'https://raw.githubusercontent.com/RobertIsham1621/CP40-index/main/CP40-740.json'
+response = requests.get(url)
+cp40json = json.loads(response.text)
+
+#_via_img_metadata
+for index, row in df.iterrows():
+  if row['f/d']=='f':
+    side='fronts'
+  elif row['f/d']=='d':
+    side='dorses'
+  url='http://aalt.law.uh.edu/AALT1/H6/CP40no740/aCP40no740' + side + '/IMG_' + '{:04d}'.format(int(row['Image'])) + '.JPG-1'
+  print(url)
+ #   print(row)
