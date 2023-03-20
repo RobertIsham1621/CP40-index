@@ -49,7 +49,7 @@ for index, row in df.iterrows():
       'x': random.randint(0, 200),
       'y':  random.randint(0, 200),
       'width': 190,
-      'height': 79},'region_attributes':{'field_type': 'County',
+      'height': 79},'region_attributes':{'field_type': 'county',
       'text': row['County'],
       'indexer_type': 'human',
       'reviewed': {}}})
