@@ -2567,15 +2567,23 @@ function via_region_shape_to_coco_annotation(shape_attributes) {
 }
 
 
-function commit_to_github(data,filename)
+function commit_to_github(myjson,filename)
 {
   const token = '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'; // Replace with your GitHub token
 const owner = 'RobertIsham1621'; // Replace with the owner of the repository
 const repo = 'CP40-index'; // Replace with the name of the repository
 const branch = 'main'; // Replace with the name of the branch you want to commit to
 
-// Encode the file content as a base64 string
-const contentEncoded = btoa(data);
+const encoder = new TextEncoder();
+const byteArray = encoder.encode(myjson);
+
+const chunkSize = 5000; // Maximum size of each chunk
+let base64String = '';
+
+for (let i = 0; i < byteArray.length; i += chunkSize) {
+  const chunk = byteArray.subarray(i, i + chunkSize);
+  base64String += btoa(String.fromCharCode.apply(null, chunk));
+}
 
 // Get the existing file content
 fetch(`https://api.github.com/repos/${owner}/${repo}/contents/CP40-740.json`, {
@@ -2588,7 +2596,7 @@ fetch(`https://api.github.com/repos/${owner}/${repo}/contents/CP40-740.json`, {
     // Create the commit message and commit details
     const commitMessage = 'Update file with new revision';
     const path = 'CP40-740.json';
-    const content = contentEncoded;
+    const content = base64String;
     const sha = data.sha;
     const body = {
       owner: owner,
