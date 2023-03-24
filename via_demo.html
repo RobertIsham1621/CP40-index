@@ -8394,11 +8394,12 @@ function project_save_confirmed(input) {
                      };
 
   var filename = input.project_name.value + '.json';
+  var json_string = JSON.stringify(_via_project);
   var data_blob = new Blob( [JSON.stringify(_via_project)],
                             {type: 'text/json;charset=utf-8'});
 
  // save_data_to_local_file(data_blob, filename);
-  commit_to_github(data_blob,filename);
+  commit_to_github(json_string,filename);
   
 
   user_input_default_cancel_handler();
