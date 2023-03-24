@@ -2566,6 +2566,64 @@ function via_region_shape_to_coco_annotation(shape_attributes) {
   return annotation;
 }
 
+
+function commit_to_github(data,filename)
+{
+  const token = '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'; // Replace with your GitHub token
+const owner = 'RobertIsham1621'; // Replace with the owner of the repository
+const repo = 'CP40-index'; // Replace with the name of the repository
+const branch = 'main'; // Replace with the name of the branch you want to commit to
+
+// Encode the file content as a base64 string
+const contentEncoded = btoa(data);
+
+// Get the existing file content
+fetch(`https://api.github.com/repos/${owner}/${repo}/contents/CP40-740.json`, {
+  headers: {
+    'Authorization': `Bearer ${token}`
+  }
+})
+  .then(response => response.json())
+  .then(data => {
+    // Create the commit message and commit details
+    const commitMessage = 'Update file with new revision';
+    const path = 'CP40-740.json';
+    const content = contentEncoded;
+    const sha = data.sha;
+    const body = {
+      owner: owner,
+      repo: repo,
+      path: path,
+      message: commitMessage,
+      branch: branch,
+      content: content,
+      path: path,
+      sha: sha,
+      committer: {
+    name: 'Joshua Isom',
+    email: 'isomjd@gmail.com'
+  },
+    };
+
+    // Create the fetch options
+    const options = {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${token}`
+      },
+      body: JSON.stringify(body)
+    };
+
+    // Make the fetch request to create the commit
+    fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, options)
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error(error));
+  })
+  .catch(error => console.error(error));
+
+}
+
 function save_data_to_local_file(data, filename) {
   var a      = document.createElement('a');
   a.href     = URL.createObjectURL(data);
@@ -8339,7 +8397,9 @@ function project_save_confirmed(input) {
   var data_blob = new Blob( [JSON.stringify(_via_project)],
                             {type: 'text/json;charset=utf-8'});
 
-  save_data_to_local_file(data_blob, filename);
+ // save_data_to_local_file(data_blob, filename);
+  commit_to_github(data_blob,filename);
+  
 
   user_input_default_cancel_handler();
 }
