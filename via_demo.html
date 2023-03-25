@@ -1341,6 +1341,7 @@ var _via_buffer_img_shown_timestamp = [];
 var _via_preload_img_promise_list   = [];
 
 // via settings
+var github_token ='';
 var _via_settings = {};
 _via_settings.ui  = {};
 _via_settings.ui.annotation_editor_height   = 25; // in percent of the height of browser window
@@ -2614,7 +2615,7 @@ function base64encode(str) {
 
 function commit_to_github(myjson,filename)
 {
-  const token=_via_settings.project.token ;
+  const token=github_token ;
 const owner = 'RobertIsham1621'; // Replace with the owner of the repository
 const repo = 'CP40-index'; // Replace with the name of the repository
 const branch = 'main'; // Replace with the name of the branch you want to commit to
@@ -8401,7 +8402,7 @@ function project_on_name_update(p) {
 }
 
 function project_set_token(p) {
-  _via_settings.project.token = p.value;
+  github_token = p.value;
 }
 
 
@@ -8433,7 +8434,8 @@ function project_save_confirmed(input) {
     project_set_name(input.project_name.value);
   }
   // via project
-  var _via_project = {'_via_img_metadata': _via_img_metadata,
+  var _via_project = { '_via_settings': _via_settings,
+                       '_via_img_metadata': _via_img_metadata,
                        '_via_attributes': _via_attributes,
                        '_via_data_format_version': '2.0.10',
                        '_via_image_id_list': _via_image_id_list
