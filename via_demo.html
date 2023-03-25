@@ -8432,10 +8432,8 @@ function project_save_confirmed(input) {
   if ( input.project_name.value !== _via_settings.project.name ) {
     project_set_name(input.project_name.value);
   }
-
   // via project
-  var _via_project = { '_via_settings': _via_settings,
-                       '_via_img_metadata': _via_img_metadata,
+  var _via_project = {'_via_img_metadata': _via_img_metadata,
                        '_via_attributes': _via_attributes,
                        '_via_data_format_version': '2.0.10',
                        '_via_image_id_list': _via_image_id_list
@@ -8447,6 +8445,7 @@ function project_save_confirmed(input) {
                             {type: 'text/json;charset=utf-8'});
 
  // save_data_to_local_file(data_blob, filename);
+ 
   commit_to_github(json_string,filename);
   
 
