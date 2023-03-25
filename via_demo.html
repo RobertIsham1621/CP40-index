@@ -427,7 +427,7 @@ ul.region_shape .selected { fill:#ffffff; stroke:#ff0000; }
           <li onclick="show_home_panel()" style="cursor:pointer;">Home</li>
           <li>Project
             <ul>
-              <li onclick="project_open_select_project_file()" title="Load a VIA project (from a JSON file)">Load</li>
+              <li onclick="project_open_from_git()" title="Load a VIA project (from a JSON file)">Load</li>
               <li onclick="project_save_with_confirm()" title="Save this VIA project (as a JSON file)">Save</li>
               <li onclick="settings_panel_toggle()" title="Show/edit project settings">Settings</li>
               <li class="submenu_divider"></li>
@@ -490,7 +490,7 @@ ul.region_shape .selected { fill:#ffffff; stroke:#ff0000; }
 
       <!-- Shortcut toolbar -->
       <div class="toolbar">
-        <svg onclick="project_open_select_project_file()" viewbox="0 0 24 24"><use xlink:href="#icon_open"></use><title>Open Project</title></svg>
+        <svg onclick="project_open_from_git()" viewbox="0 0 24 24"><use xlink:href="#icon_open"></use><title>Open Project</title></svg>
         <svg onclick="project_save_with_confirm()" viewbox="0 0 24 24"><use xlink:href="#icon_save"></use><title>Save Project</title></svg>
         <svg onclick="settings_panel_toggle()" viewbox="0 0 24 24"><use xlink:href="#icon_settings"></use><title>Update Project Settings</title></svg>
         <!--
@@ -534,6 +534,16 @@ ul.region_shape .selected { fill:#ffffff; stroke:#ff0000; }
           <span class="text_button" onclick="leftsidebar_increase_width()" title="Increase width of this toolbar panel">&rarr;</span>
           <span class="text_button" onclick="leftsidebar_toggle()" title="Show/hide this toolbar panel">&ltrif;</span>
         </div>
+ <!-- Authentication -->
+ <button class="leftsidebar_accordion active" id="authentication_panel_title">Authentication</button>
+ <div class="leftsidebar_accordion_panel show" id="img_fn_list_panel">
+   <div id="authentication_info_panel">
+     <div class="row">
+       <span class="col"><label for="github_token">GitHub Token: </label></span>
+       <span class="col"><input type="text" value="" onchange="project_set_token(this)" id="github_token" title="Github Token"></span>
+     </div>
+   </div>
+ </div>
 
 
 
@@ -988,6 +998,7 @@ POSSIBILITY OF SUCH DAMAGE.
     <div style="width: 100%;" id="vertical_space"></div>
 
 <!-- START: Contents of file: src/demo/_via_basic_demo.js-->
+<script src="base64-js.min.js"></script>
 <script>
 /*
   VGG Image Annotator (via)
@@ -1018,10 +1029,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 function _via_load_submodules() {
-  _via_basic_demo_load_img();
+  project_open_from_git();
+  //_via_basic_demo_load_img();
   //_via_basic_demo_draw_default_regions();
-  _via_basic_demo_define_attributes();
-  _via_basic_demo_define_annotations();
+  //_via_basic_demo_define_attributes();
+  //_via_basic_demo_define_annotations();
 
   toggle_attributes_editor();
   update_attributes_update_panel();
@@ -2566,24 +2578,48 @@ function via_region_shape_to_coco_annotation(shape_attributes) {
   return annotation;
 }
 
+function base64encode(str) {
+  var keyStr =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+  var output = "";
+  var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+  var i = 0;
+
+  while (i < str.length) {
+    chr1 = str.charCodeAt(i++);
+    chr2 = str.charCodeAt(i++);
+    chr3 = str.charCodeAt(i++);
+
+    enc1 = chr1 >> 2;
+    enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+    enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+    enc4 = chr3 & 63;
+
+    if (isNaN(chr2)) {
+      enc3 = enc4 = 64;
+    } else if (isNaN(chr3)) {
+      enc4 = 64;
+    }
+
+    output =
+      output +
+      keyStr.charAt(enc1) +
+      keyStr.charAt(enc2) +
+      keyStr.charAt(enc3) +
+      keyStr.charAt(enc4);
+  }
+
+  return output;
+}
 
 function commit_to_github(myjson,filename)
 {
-  const token = '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'; // Replace with your GitHub token
+  const token=_via_settings.project.token ;
 const owner = 'RobertIsham1621'; // Replace with the owner of the repository
 const repo = 'CP40-index'; // Replace with the name of the repository
 const branch = 'main'; // Replace with the name of the branch you want to commit to
-
-const encoder = new TextEncoder();
-const byteArray = encoder.encode(myjson);
-
-const chunkSize = 5000; // Maximum size of each chunk
-let base64String = '';
-
-for (let i = 0; i < byteArray.length; i += chunkSize) {
-  const chunk = byteArray.subarray(i, i + chunkSize);
-  base64String += btoa(String.fromCharCode.apply(null, chunk));
-}
+const utf8String = unescape(encodeURIComponent(myjson));
+const base64String = btoa(utf8String);
 
 // Get the existing file content
 fetch(`https://api.github.com/repos/${owner}/${repo}/contents/CP40-740.json`, {
@@ -2596,7 +2632,6 @@ fetch(`https://api.github.com/repos/${owner}/${repo}/contents/CP40-740.json`, {
     // Create the commit message and commit details
     const commitMessage = 'Update file with new revision';
     const path = 'CP40-740.json';
-    const content = base64String;
     const sha = data.sha;
     const body = {
       owner: owner,
@@ -2604,13 +2639,12 @@ fetch(`https://api.github.com/repos/${owner}/${repo}/contents/CP40-740.json`, {
       path: path,
       message: commitMessage,
       branch: branch,
-      content: content,
-      path: path,
+      content: base64String,
       sha: sha,
       committer: {
-    name: 'Joshua Isom',
-    email: 'isomjd@gmail.com'
-  },
+        name: 'Joshua Isom',
+        email: 'isomjd@gmail.com'
+      }
     };
 
     // Create the fetch options
@@ -2629,6 +2663,7 @@ fetch(`https://api.github.com/repos/${owner}/${repo}/contents/CP40-740.json`, {
       .catch(error => console.error(error));
   })
   .catch(error => console.error(error));
+
 
 }
 
@@ -8365,6 +8400,11 @@ function project_on_name_update(p) {
   project_set_name(p.value);
 }
 
+function project_set_token(p) {
+  _via_settings.project.token = p.value;
+}
+
+
 function project_get_default_project_name() {
   const now = new Date();
   var MONTH_SHORT_NAME = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -8425,6 +8465,22 @@ function project_open_select_project_file() {
 function project_open(event) {
   var selected_file = event.target.files[0];
   load_text_file(selected_file, project_open_parse_json_file);
+}
+
+function project_open_from_git() {
+  fetch('https://raw.githubusercontent.com/RobertIsham1621/CP40-index/main/CP40-740.json')
+  .then(response => response.json())
+  .then(data => {
+    // Convert the data object to a JSON string
+    const jsonData = JSON.stringify(data);
+
+    // Pass the JSON string to the parse function
+    project_open_parse_json_file(jsonData);
+  })
+  .catch(error => {
+    // Handle any errors that occurred while fetching the data
+    console.error(error);
+  });
 }
 
 function project_open_parse_json_file(project_file_data) {
