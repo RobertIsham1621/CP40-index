@@ -52,7 +52,7 @@ for index, row in df.iterrows():
     else:
       img_count[row['Image']]=img_count[row['Image']]+1
     url='http://aalt.law.uh.edu/AALT1/H6/CP40no740/' + letter +'CP40no740' + side + '/IMG_' + '{:04d}'.format(int(row['Image'])) + '.JPG-1'
-    cp40json['_via_img_metadata'][url]['regions'].append({'shape_attribues':{'name': 'rect',
+    cp40json['_via_img_metadata'][url]['regions'].append({'shape_attributes':{'name': 'rect',
       'x': random.randint(0, 200),
       'y':  random.randint(0, 200),
       'width': 190,
@@ -61,7 +61,7 @@ for index, row in df.iterrows():
       'indexer_type': 'human',
        'image_suit_id': seq[img_count[row['Image']]],
       'reviewed': {}}})
-    cp40json['_via_img_metadata'][url]['regions'].append({'shape_attribues':{'name': 'rect',
+    cp40json['_via_img_metadata'][url]['regions'].append({'shape_attributes':{'name': 'rect',
       'x':  random.randint(0, 200),
       'y':  random.randint(0, 200),
       'width': 190,
@@ -70,7 +70,7 @@ for index, row in df.iterrows():
       'indexer_type': 'human',
       'image_suit_id': seq[img_count[row['Image']]],
       'reviewed': {}}})
-    cp40json['_via_img_metadata'][url]['regions'].append({'shape_attribues':{'name': 'rect',
+    cp40json['_via_img_metadata'][url]['regions'].append({'shape_attributes':{'name': 'rect',
       'x': random.randint(0, 200),
       'y':  random.randint(0, 200),
       'width': 190,
@@ -79,7 +79,7 @@ for index, row in df.iterrows():
       'indexer_type': 'human',
       'image_suit_id': seq[img_count[row['Image']]],
       'reviewed': {}}})
-    cp40json['_via_img_metadata'][url]['regions'].append({'shape_attribues':{'name': 'rect',
+    cp40json['_via_img_metadata'][url]['regions'].append({'shape_attributes':{'name': 'rect',
       'x':  random.randint(0, 200),
       'y':  random.randint(0, 200),
       'width': 190,
