@@ -998,7 +998,6 @@ POSSIBILITY OF SUCH DAMAGE.
     <div style="width: 100%;" id="vertical_space"></div>
 
 <!-- START: Contents of file: src/demo/_via_basic_demo.js-->
-<script src="base64-js.min.js"></script>
 <script>
 /*
   VGG Image Annotator (via)
@@ -2613,7 +2612,7 @@ function base64encode(str) {
   return output;
 }
 
-function commit_to_github(myjson,filename)
+function commit_to_github(myjson,filename,arg1,cm)
 {
   const token=github_token ;
 const owner = 'RobertIsham1621'; // Replace with the owner of the repository
@@ -8419,9 +8418,11 @@ function project_get_default_project_name() {
 function project_save_with_confirm() {
   var config = {'title':'Save Project' };
   var input = { 'project_name': { type:'text', name:'Project Name', value:_via_settings.project.name, disabled:false, size:30 },
-                'save_annotations':{ type:'checkbox', name:'Save region and file annotations (i.e. manual annotations)', checked:true, disabled:false},
-                'save_attributes':{ type:'checkbox', name:'Save region and file attributes.', checked:true},
-                'save_via_settings':{ type:'checkbox', name:'Save VIA application settings', checked:true},
+  'branch': { type:'text', name:'Branch', value:_via_settings.project.name, disabled:false, size:30 },
+  'commit_message': { type:'text', name:'Commit Message', value:_via_settings.project.name, disabled:false, size:30 },
+                //'save_annotations':{ type:'checkbox', name:'Save region and file annotations (i.e. manual annotations)', checked:true, disabled:false},
+               // //'save_attributes':{ type:'checkbox', name:'Save region and file attributes.', checked:true},
+               // 'save_via_settings':{ type:'checkbox', name:'Save VIA application settings', checked:true},
                 //                'save_base64_data':{ type:'checkbox', name:'Save base64 data of images (if present)', checked:false},
                 //                'save_images':{type:'checkbox', 'name':'Save images <span class="warning">(WARNING: only recommended for projects containing small number of images)</span>', value:false},
               };
@@ -8442,13 +8443,15 @@ function project_save_confirmed(input) {
                      };
 
   var filename = input.project_name.value + '.json';
+  var branch = input.branch;
+  var commit_message=input.commit_message
   var json_string = JSON.stringify(_via_project);
   var data_blob = new Blob( [JSON.stringify(_via_project)],
                             {type: 'text/json;charset=utf-8'});
 
  // save_data_to_local_file(data_blob, filename);
  
-  commit_to_github(json_string,filename);
+  commit_to_github(json_string,filename,branch,commit_message);
   
 
   user_input_default_cancel_handler();
