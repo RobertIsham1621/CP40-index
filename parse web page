@@ -53,8 +53,8 @@ for index, row in df.iterrows():
       img_count[row['Image']]=img_count[row['Image']]+1
     url='http://aalt.law.uh.edu/AALT1/H6/CP40no740/' + letter +'CP40no740' + side + '/IMG_' + '{:04d}'.format(int(row['Image'])) + '.JPG-1'
     cp40json['_via_img_metadata'][url]['regions'].append({'shape_attributes':{'name': 'rect',
-      'x': random.randint(0, 200),
-      'y':  random.randint(0, 200),
+      'x': 100,
+      'y':  img_count[row['Image']]*200+100,
       'width': 190,
       'height': 79},'region_attributes':{'field_type': 'county',
       'text': row['County'],
@@ -62,8 +62,8 @@ for index, row in df.iterrows():
        'image_suit_id': seq[img_count[row['Image']]],
       'reviewed': {}}})
     cp40json['_via_img_metadata'][url]['regions'].append({'shape_attributes':{'name': 'rect',
-      'x':  random.randint(0, 200),
-      'y':  random.randint(0, 200),
+      'x': 300,
+      'y': img_count[row['Image']]*200+100,
       'width': 190,
       'height': 79},'region_attributes':{'field_type': 'plaintiff',
       'text': row['Plaintiff'],
@@ -71,8 +71,8 @@ for index, row in df.iterrows():
       'image_suit_id': seq[img_count[row['Image']]],
       'reviewed': {}}})
     cp40json['_via_img_metadata'][url]['regions'].append({'shape_attributes':{'name': 'rect',
-      'x': random.randint(0, 200),
-      'y':  random.randint(0, 200),
+      'x': 500,
+      'y':  img_count[row['Image']]*200+100,
       'width': 190,
       'height': 79},'region_attributes':{'field_type': 'defendant',
       'text': row['Defendant'],
@@ -80,8 +80,8 @@ for index, row in df.iterrows():
       'image_suit_id': seq[img_count[row['Image']]],
       'reviewed': {}}})
     cp40json['_via_img_metadata'][url]['regions'].append({'shape_attributes':{'name': 'rect',
-      'x':  random.randint(0, 200),
-      'y':  random.randint(0, 200),
+      'x':  600,
+      'y': img_count[row['Image']]*200+100,
       'width': 190,
       'height': 79},'region_attributes':{'field_type': 'suit type',
       'text': row['Type of Plea'],
