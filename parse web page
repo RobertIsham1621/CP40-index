@@ -1,3 +1,4 @@
+
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
@@ -31,10 +32,12 @@ df = pd.read_html(str(table), header=0)[0]
 
 print(df.head())
 
-url = 'https://raw.githubusercontent.com/RobertIsham1621/CP40-index/main/CP40-740.json'
+url = 'https://raw.githubusercontent.com/RobertIsham1621/CP40-index/972ecf725193c1019b481c1b3592c943cdea799e/CP40-740.json'
 response = requests.get(url)
 cp40json = json.loads(response.text)
-
+seq={0:'A',1:'B',2:'C',3:'D',4:'E',5:'F',6:'G',7:'H',8:'I',9:'J',10:'K'}
+img_count={}
+cp40json['_via_attributes']['region']['image_suit_id']={"type":"dropdown","description":"Image suit ID","options":{"A":"A","B":"B","C":"C","D":"D","E":"E","F":"F","G":"G","H":"H","I":"I","J":"J","K":"K","L":"L","M":"M"},"default_options":{}}
 #_via_img_metadata
 for index, row in df.iterrows():
   if row['f/d']=='f':
@@ -44,6 +47,10 @@ for index, row in df.iterrows():
     side='dorses'
     letter='b'
   try:
+    if row['Image'] not in img_count:
+      img_count[row['Image']]=0
+    else:
+      img_count[row['Image']]=img_count[row['Image']]+1
     url='http://aalt.law.uh.edu/AALT1/H6/CP40no740/' + letter +'CP40no740' + side + '/IMG_' + '{:04d}'.format(int(row['Image'])) + '.JPG-1'
     cp40json['_via_img_metadata'][url]['regions'].append({'shape_attribues':{'name': 'rect',
       'x': random.randint(0, 200),
@@ -52,6 +59,7 @@ for index, row in df.iterrows():
       'height': 79},'region_attributes':{'field_type': 'county',
       'text': row['County'],
       'indexer_type': 'human',
+       'image_suit_id': seq[img_count[row['Image']]],
       'reviewed': {}}})
     cp40json['_via_img_metadata'][url]['regions'].append({'shape_attribues':{'name': 'rect',
       'x':  random.randint(0, 200),
@@ -60,6 +68,7 @@ for index, row in df.iterrows():
       'height': 79},'region_attributes':{'field_type': 'plaintiff',
       'text': row['Plaintiff'],
       'indexer_type': 'human',
+      'image_suit_id': seq[img_count[row['Image']]],
       'reviewed': {}}})
     cp40json['_via_img_metadata'][url]['regions'].append({'shape_attribues':{'name': 'rect',
       'x': random.randint(0, 200),
@@ -68,6 +77,7 @@ for index, row in df.iterrows():
       'height': 79},'region_attributes':{'field_type': 'defendant',
       'text': row['Defendant'],
       'indexer_type': 'human',
+      'image_suit_id': seq[img_count[row['Image']]],
       'reviewed': {}}})
     cp40json['_via_img_metadata'][url]['regions'].append({'shape_attribues':{'name': 'rect',
       'x':  random.randint(0, 200),
@@ -76,6 +86,7 @@ for index, row in df.iterrows():
       'height': 79},'region_attributes':{'field_type': 'suit type',
       'text': row['Type of Plea'],
       'indexer_type': 'human',
+      'image_suit_id': seq[img_count[row['Image']]],
       'reviewed': {}}})
     print('succeed')
   except Exception as e:
@@ -83,4 +94,3 @@ for index, row in df.iterrows():
 
 with open('cp40index.json', 'w') as json_file:
     json.dump(cp40json, json_file)
- #   print(row)
