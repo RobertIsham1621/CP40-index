@@ -2612,12 +2612,12 @@ function base64encode(str) {
   return output;
 }
 
-function commit_to_github(myjson,filename,arg1,cm)
+function commit_to_github(myjson,filename,br,cm)
 {
   const token=github_token ;
 const owner = 'RobertIsham1621'; // Replace with the owner of the repository
 const repo = 'CP40-index'; // Replace with the name of the repository
-const branch = 'main'; // Replace with the name of the branch you want to commit to
+const branch = br.value; // Replace with the name of the branch you want to commit to
 const utf8String = unescape(encodeURIComponent(myjson));
 const base64String = btoa(utf8String);
 
@@ -2630,7 +2630,7 @@ fetch(`https://api.github.com/repos/${owner}/${repo}/contents/CP40-740.json`, {
   .then(response => response.json())
   .then(data => {
     // Create the commit message and commit details
-    const commitMessage = 'Update file with new revision';
+    const commitMessage = cm.value;
     const path = 'CP40-740.json';
     const sha = data.sha;
     const body = {
@@ -8417,9 +8417,9 @@ function project_get_default_project_name() {
 
 function project_save_with_confirm() {
   var config = {'title':'Save Project' };
-  var input = { 'project_name': { type:'text', name:'Project Name', value:_via_settings.project.name, disabled:false, size:30 },
-  'branch': { type:'text', name:'Branch', value:_via_settings.project.name, disabled:false, size:30 },
-  'commit_message': { type:'text', name:'Commit Message', value:_via_settings.project.name, disabled:false, size:30 },
+  var input = { 'project_name': { type:'text', name:'Project Name', value:_via_settings.project.name, disabled:true, size:30 },
+  'branch': { type:'text', name:'Branch',value: 'main', disabled:false, size:30 },
+  'commit_message': { type:'text', name:'Commit Message', value:'describe your changes', disabled:false, size:30 },
                 //'save_annotations':{ type:'checkbox', name:'Save region and file annotations (i.e. manual annotations)', checked:true, disabled:false},
                // //'save_attributes':{ type:'checkbox', name:'Save region and file attributes.', checked:true},
                // 'save_via_settings':{ type:'checkbox', name:'Save VIA application settings', checked:true},
