@@ -87,3 +87,5 @@ import ultralytics
 ultralytics.checks()
 !yolo train model=yolov8s.pt data=data.yaml epochs=200 imgsz=2048
 
+
+!yolo mode=predict  model=runs/detect/train/weights/best.pt source=train/images save_txt=True conf=0.4  save=True
