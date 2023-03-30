@@ -85,5 +85,5 @@ print(str(count))
 %pip install ultralytics
 import ultralytics
 ultralytics.checks()
-!yolo train model=yolov8n.pt data=data.yaml epochs=40 imgsz=1280
+!yolo train model=yolov8s.pt data=data.yaml epochs=200 imgsz=2048
 
